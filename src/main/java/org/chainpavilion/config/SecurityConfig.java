@@ -50,7 +50,7 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/api/auth/**", "/api/resources/**", "/api/test/public").permitAll() // 允许公开访问的API
+                .antMatchers("/", "/index.html", "/static/**", "/public/**", "/css/**", "/js/**", "/images/**", "/api/auth/**", "/api/resources/**", "/api/test/public", "/error").permitAll() // 允许公开访问的资源和API
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
