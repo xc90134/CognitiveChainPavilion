@@ -7,16 +7,16 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
- * 知链智阁（CognitiveChainPavilion）应用启动类
- * 
+  知链智阁（CognitiveChainPavilion）应用启动类
+ *
  * 这是一个集学习资源聚合、社区交流、学习激励于一体的综合学习平台
- * 
+ *
  * 功能包括：
  * 1. 用户系统：注册、登录、个人中心
  * 2. 资源管理：多源学习资源整合、分类展示
  * 3. 搜索功能：关键词搜索和资源分类筛选
  * 4. 收藏功能：用户收藏和管理学习资源
- * 
+ *
  * @author 知链智阁团队
  * @version 1.0.0
  */

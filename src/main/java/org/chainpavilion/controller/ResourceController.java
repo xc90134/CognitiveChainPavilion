@@ -65,16 +65,26 @@ public class ResourceController {
     }
 
     /**
-     * 搜索资源接口
-     * 
+     * 资源搜索接口（增强版）
      * @param keyword 搜索关键词
+     * @param category 资源分类
      * @return 匹配的资源列表
      */
+    /*
     @GetMapping("/search")
-    public ResponseEntity<List<Resource>> searchResources(@RequestParam String keyword) {
-        return ResponseEntity.ok(resourceService.searchResourcesByKeyword(keyword));
+    public ResponseEntity<List<Resource>> searchResources(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String category) {
+        
+        if ((keyword == null || keyword.isEmpty()) &&
+            (category == null || category.isEmpty())) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        List<Resource> results = resourceService.searchResources(keyword, category);
+        return ResponseEntity.ok(results);
     }
-    
+    */
     /**
      * 根据ID获取资源接口
      * 

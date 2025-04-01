@@ -88,6 +88,21 @@ public class ResourceService {
     }
 
     /**
+     * 增强版资源搜索
+     * 支持关键词与分类组合查询
+     */
+    /*
+    public List<Resource> searchResources(String keyword, String category) {
+        if (keyword != null && category != null) {
+            return resourceRepository.findByTitleContainingAndCategory(keyword, category);
+        } else if (keyword != null) {
+            return resourceRepository.findByTitleContaining(keyword);
+        } else {
+            return resourceRepository.findByCategory(category);
+        }
+    }
+    */
+    /**
      * 删除资源
      * 
      * @param id 要删除的资源ID
