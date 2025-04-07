@@ -2,15 +2,19 @@ package org.chainpavilion.service;
 
 import org.chainpavilion.model.Resource;
 import org.chainpavilion.model.User;
+import org.chainpavilion.model.enums.ResourceCategory;
 import org.chainpavilion.repository.ResourceRepository;
 import org.chainpavilion.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -127,16 +131,16 @@ public class ResourceService {
             return false;
         }
         
-        if (user.getResources() == null) {
-            user.setResources(new HashSet<>());
+        if (user.getFavoriteResources() == null) {
+            user.setFavoriteResources(new HashSet<>());
         }
         
         // 检查是否已经收藏
-        if (user.getResources().contains(resource)) {
+        if (user.getFavoriteResources().contains(resource)) {
             return false;
         }
         
-        user.getResources().add(resource);
+        user.getFavoriteResources().add(resource);
         userRepository.save(user);
         return true;
     }
@@ -153,16 +157,16 @@ public class ResourceService {
         User user = userRepository.findById(userId).orElse(null);
         Resource resource = resourceRepository.findById(resourceId).orElse(null);
         
-        if (user == null || resource == null || user.getResources() == null) {
+        if (user == null || resource == null || user.getFavoriteResources() == null) {
             return false;
         }
         
         // 检查是否已经收藏
-        if (!user.getResources().contains(resource)) {
+        if (!user.getFavoriteResources().contains(resource)) {
             return false;
         }
         
-        user.getResources().remove(resource);
+        user.getFavoriteResources().remove(resource);
         userRepository.save(user);
         return true;
     }
@@ -175,10 +179,74 @@ public class ResourceService {
      */
     public List<Resource> getFavoriteResources(Long userId) {
         User user = userRepository.findById(userId).orElse(null);
-        if (user == null || user.getResources() == null) {
+        if (user == null || user.getFavoriteResources() == null) {
             return new ArrayList<>();
         }
         
-        return new ArrayList<>(user.getResources());
+        return new ArrayList<>(user.getFavoriteResources());
+    }
+
+    /**
+     * 分页获取所有资源
+     * 
+     * @param pageable 分页参数
+     * @return 分页资源列表
+     */
+    public Page<Resource> findAll(Pageable pageable) {
+        return resourceRepository.findAll(pageable);
+    }
+    
+    /**
+     * 根据分类分页查询资源
+     * 
+     * @param category 资源分类
+     * @param pageable 分页参数
+     * @return 分页资源列表
+     */
+    public Page<Resource> findByCategory(ResourceCategory category, Pageable pageable) {
+        return resourceRepository.findByCategory(category, pageable);
+    }
+    
+    /**
+     * 根据关键词分页搜索资源
+     * 
+     * @param keyword 搜索关键词
+     * @param pageable 分页参数
+     * @return 分页资源列表
+     */
+    public Page<Resource> findByKeyword(String keyword, Pageable pageable) {
+        return resourceRepository.findByKeyword(keyword, pageable);
+    }
+    
+    /**
+     * 根据分类和关键词分页搜索资源
+     * 
+     * @param category 资源分类
+     * @param keyword 搜索关键词
+     * @param pageable 分页参数
+     * @return 分页资源列表
+     */
+    public Page<Resource> findByCategoryAndKeyword(ResourceCategory category, String keyword, Pageable pageable) {
+        return resourceRepository.findByCategoryAndKeyword(category, keyword, pageable);
+    }
+    
+    /**
+     * 获取用户收藏的资源列表
+     * 
+     * @param user 用户
+     * @param pageable 分页参数
+     * @return 分页收藏资源列表
+     */
+    public Page<Resource> findFavoritesByUser(User user, Pageable pageable) {
+        return resourceRepository.findFavoritesByUser(user, pageable);
+    }
+    
+    /**
+     * 获取各分类的资源数量统计
+     * 
+     * @return 分类及其对应的资源数量
+     */
+    public Map<ResourceCategory, Long> getCategoryCounts() {
+        return resourceRepository.getCategoryCounts();
     }
 }

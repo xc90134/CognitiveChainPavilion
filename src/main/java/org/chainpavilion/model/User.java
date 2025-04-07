@@ -1,13 +1,17 @@
 package org.chainpavilion.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
  * 用户实体类
  * 
- * 表示系统中的用户账户信息，包括：
- * - 基本账户信息（用户名、密码、邮箱）
+ * 表示系统中的用户，包括：
+ * - 用户基本信息（用户名、密码、邮箱等）
+ * - 用户角色
  * - 用户收藏的资源集合
  * 
  * @author 知链智阁团队
@@ -25,32 +29,35 @@ public class User {
     /**
      * 用户名，唯一且不能为空
      */
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false, unique = true)
     private String username;
 
     /**
      * 密码，加密存储，不能为空
      */
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
     /**
      * 电子邮箱，不能为空
      */
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
+
+    private String role;
 
     /**
      * 用户收藏的资源集合
-     * 通过中间表user_resources关联
      */
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     @JoinTable(
-            name = "user_resources",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "resource_id")
+        name = "user_favorites",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "resource_id")
     )
-    private Set<Resource> resources;
+    @JsonIgnore
+    private Set<Resource> favoriteResources = new HashSet<>();
 
     // Getters and Setters
     public Long getId() {
@@ -85,11 +92,19 @@ public class User {
         this.email = email;
     }
 
-    public Set<Resource> getResources() {
-        return resources;
+    public String getRole() {
+        return role;
     }
 
-    public void setResources(Set<Resource> resources) {
-        this.resources = resources;
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public Set<Resource> getFavoriteResources() {
+        return favoriteResources;
+    }
+
+    public void setFavoriteResources(Set<Resource> favoriteResources) {
+        this.favoriteResources = favoriteResources;
     }
 }

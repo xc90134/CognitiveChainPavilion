@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知链智阁社区</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <style>
+        .post-card {
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .post-card:hover {
+            transform: translateY(-5px);
+        }
+        .comment-section {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <h2 class="mb-4">知链智阁知识交流社区</h2>
+        
+        <!-- 发帖表单 -->
+        <div class="card post-card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">发表新话题</h5>
+                <form id="postForm">
+                    <div class="mb-3">
+                        <input type="text" class="form-control" placeholder="请输入标题" required>
+                    </div>
+                    <div class="mb-3">
+                        <textarea class="form-control" rows="3" placeholder="分享你的见解..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">发布帖子</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 帖子列表 -->
+        <div id="postList">
+            <!-- 动态加载帖子 -->
+            <div class="card post-card mb-3">
+                <div class="card-body">
+                    <h5>示例帖子标题</h5>
+                    <p class="text-muted">作者：示例用户 · 发布于 2小时前</p>
+                    <p>这里是帖子内容示例，展示知链智阁技术的最新发展动态...</p>
+                    
+                    <!-- 评论区域 -->
+                    <div class="comment-section p-3 mt-3">
+                        <h6>评论（2）</h6>
+                        <div class="mb-2">
+                            <p class="mb-0"><strong>用户A：</strong>很好的观点！</p>
+                            <small class="text-muted">1小时前</small>
+                        </div>
+                        <form class="mt-2">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="写下你的评论...">
+                                <button class="btn btn-outline-secondary" type="button">发送</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script>
+
+    // 帖子数据请求API地址
+    const API_URL = '/api/posts';
+
+    // 初始化事件监听
+    document.addEventListener('DOMContentLoaded', () => {
+        loadPosts();
+        document.getElementById('postForm').addEventListener('submit', handleSubmit);
+    });
+
+    // 加载帖子列表
+    async function loadPosts() {
+        try {
+            const response = await fetch(API_URL);
+            const posts = await response.json();
+            renderPosts(posts);
+        } catch (error) {
+            console.error('加载帖子失败:', error);
+        }
+    }
+
+    // 处理表单提交
+    async function handleSubmit(event) {
+        event.preventDefault();
+        
+        const formData = {
+            title: event.target[0].value,
+            content: event.target[1].value
+        };
+
+        try {
+            await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            });
+            event.target.reset();
+            loadPosts();
+        } catch (error) {
+            console.error('提交失败:', error);
+        }
+    }
+
+    // 渲染帖子列表
+    function renderPosts(posts) {
+        const container = document.getElementById('postList');
+        container.innerHTML = posts.map(post => `
+            <div class="card post-card mb-3">
+                <div class="card-body">
+                    <h5>${post.title}</h5>
+                    <p class="text-muted">作者：${post.author} · 发布于 ${post.time}</p>
+                    <p>${post.content}</p>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    </script>
+</body>
+</html>
