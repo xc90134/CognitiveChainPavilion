@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -52,7 +53,14 @@ public class ResourceService {
      * @return 找到的资源对象，如果不存在则返回null
      */
     public Resource getResourceById(Long id) {
-        return resourceRepository.findById(id).orElse(null);
+        Optional<Resource> resource = resourceRepository.findById(id);
+        if (resource.isPresent()) {
+            Resource r = resource.get();
+            // 增加浏览量
+            r.setViewCount(r.getViewCount() + 1);
+            return resourceRepository.save(r);
+        }
+        return null;
     }
 
     /**
@@ -71,8 +79,8 @@ public class ResourceService {
      * @param category 资源分类
      * @return 该分类下的所有资源列表
      */
-    public List<Resource> getResourcesByCategory(String category) {
-        return resourceRepository.findByCategory(category);
+    public Page<Resource> getResourcesByCategory(String category, Pageable pageable) {
+        return resourceRepository.findByCategory(ResourceCategory.valueOf(category), pageable);
     }
     
     /**
@@ -192,53 +200,71 @@ public class ResourceService {
      * @param pageable 分页参数
      * @return 分页资源列表
      */
-    public Page<Resource> findAll(Pageable pageable) {
+    public Page<Resource> getAllResources(Pageable pageable) {
         return resourceRepository.findAll(pageable);
     }
+
     
     /**
-     * 根据分类分页查询资源
-     * 
-     * @param category 资源分类
-     * @param pageable 分页参数
-     * @return 分页资源列表
+     * 搜索资源
      */
-    public Page<Resource> findByCategory(ResourceCategory category, Pageable pageable) {
-        return resourceRepository.findByCategory(category, pageable);
+    public Page<Resource> searchResources(String category, String keyword, Pageable pageable) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            if (category == null || category.trim().isEmpty()) {
+                return getAllResources(pageable);
+            } else {
+                return getResourcesByCategory(category, pageable);
+            }
+        }
+        
+        if (category == null || category.trim().isEmpty()) {
+            return resourceRepository.searchByKeyword(keyword, pageable);
+        } else {
+            return resourceRepository.searchByCategoryAndKeyword(category, keyword, pageable);
+        }
     }
     
     /**
-     * 根据关键词分页搜索资源
-     * 
-     * @param keyword 搜索关键词
-     * @param pageable 分页参数
-     * @return 分页资源列表
+     * 添加资源
      */
-    public Page<Resource> findByKeyword(String keyword, Pageable pageable) {
-        return resourceRepository.findByKeyword(keyword, pageable);
+    @Transactional
+    public Resource addResource(Resource resource, User user) {
+        resource.setCreatedBy(user);
+        resource.setViewCount(0);
+        resource.setFavoriteCount(0);
+        return resourceRepository.save(resource);
     }
     
     /**
-     * 根据分类和关键词分页搜索资源
-     * 
-     * @param category 资源分类
-     * @param keyword 搜索关键词
-     * @param pageable 分页参数
-     * @return 分页资源列表
+     * 获取热门资源
      */
-    public Page<Resource> findByCategoryAndKeyword(ResourceCategory category, String keyword, Pageable pageable) {
-        return resourceRepository.findByCategoryAndKeyword(category, keyword, pageable);
+    public List<Resource> getPopularResources() {
+        return resourceRepository.findTop10ByOrderByViewCountDesc();
     }
     
     /**
-     * 获取用户收藏的资源列表
+     * 获取最新资源
+     */
+    public List<Resource> getLatestResources() {
+        return resourceRepository.findTop10ByOrderByCreatedAtDesc();
+    }
+    
+    /**
+     * 根据用户查询收藏的资源（分页版本）
      * 
-     * @param user 用户
+     * @param user 用户对象
      * @param pageable 分页参数
-     * @return 分页收藏资源列表
+     * @return 该用户收藏的资源分页列表
      */
     public Page<Resource> findFavoritesByUser(User user, Pageable pageable) {
         return resourceRepository.findFavoritesByUser(user, pageable);
+    }
+    
+    /**
+     * 获取用户创建的资源
+     */
+    public Page<Resource> getUserResources(Long userId, Pageable pageable) {
+        return resourceRepository.findByCreatedById(userId, pageable);
     }
     
     /**

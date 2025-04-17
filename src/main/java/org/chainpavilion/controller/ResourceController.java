@@ -6,17 +6,25 @@ import org.chainpavilion.model.enums.ResourceCategory;
 import org.chainpavilion.repository.ResourceRepository;
 import org.chainpavilion.repository.UserRepository;
 import org.chainpavilion.service.ResourceService;
+import org.chainpavilion.service.UserActivityService;
+import org.chainpavilion.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -44,45 +52,35 @@ public class ResourceController {
     
     @Autowired
     private UserRepository userRepository;
+    
+    @Autowired
+    private UserService userService;
+    
+    @Autowired
+    private UserActivityService userActivityService;
 
     /**
-     * 获取资源列表
-     * 
-     * @param pageable 分页参数
-     * @param category 资源分类（可选）
-     * @param keyword 搜索关键词（可选）
-     * @return 分页资源列表
+     * 获取资源列表（分页+排序）
      */
     @GetMapping
-    public ResponseEntity<Page<Resource>> getResources(
-            Pageable pageable,
-            @RequestParam(required = false) ResourceCategory category,
-            @RequestParam(required = false) String keyword) {
+    public ResponseEntity<?> getResources(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDir) {
+        
+        Sort sort = Sort.by(sortDir.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
+        PageRequest pageRequest = PageRequest.of(page, size, sort);
         
         Page<Resource> resources;
-        
-        // 获取当前用户
-        User currentUser = getCurrentUser();
-        
-        if (category != null && keyword != null && !keyword.isEmpty()) {
-            // 按分类和关键词搜索
-            resources = resourceService.findByCategoryAndKeyword(category, keyword, pageable);
-        } else if (category != null) {
-            // 只按分类搜索
-            resources = resourceService.findByCategory(category, pageable);
-        } else if (keyword != null && !keyword.isEmpty()) {
-            // 只按关键词搜索
-            resources = resourceService.findByKeyword(keyword, pageable);
+        if (keyword != null && !keyword.isEmpty()) {
+            resources = resourceService.searchResources(category, keyword, pageRequest);
+        } else if (category != null && !category.isEmpty()) {
+            resources = resourceService.getResourcesByCategory(category, pageRequest);
         } else {
-            // 获取所有资源
-            resources = resourceService.findAll(pageable);
-        }
-        
-        // 如果用户已登录，标记哪些资源已被收藏
-        if (currentUser != null) {
-            resources.getContent().forEach(resource -> {
-                resource.setFavorited(currentUser.getFavoriteResources().contains(resource));
-            });
+            resources = resourceService.getAllResources(pageRequest);
         }
         
         return ResponseEntity.ok(resources);
@@ -90,117 +88,75 @@ public class ResourceController {
 
     /**
      * 获取资源详情
-     * 
-     * @param id 资源ID
-     * @return 资源详情
      */
     @GetMapping("/{id}")
-    public ResponseEntity<?> getResource(@PathVariable Long id) {
-        Optional<Resource> resource = resourceRepository.findById(id);
-        
-        if (resource.isPresent()) {
-            // 增加浏览量
-            Resource r = resource.get();
-            r.setViewCount(r.getViewCount() + 1);
-            resourceRepository.save(r);
-            
-            // 如果用户已登录，标记该资源是否已被收藏
-            User currentUser = getCurrentUser();
-            if (currentUser != null) {
-                r.setFavorited(currentUser.getFavoriteResources().contains(r));
-            }
-            
-            return ResponseEntity.ok(r);
-        } else {
+    public ResponseEntity<?> getResourceById(@PathVariable Long id, Principal principal) {
+        Resource resource = resourceService.getResourceById(id);
+        if (resource == null) {
             return ResponseEntity.notFound().build();
         }
+        
+        // 记录浏览活动
+        if (principal != null) {
+            User user = userService.findByUsername(principal.getName());
+            if (user != null) {
+                userActivityService.recordViewActivity(user.getId(), id);
+            }
+        }
+        
+        return ResponseEntity.ok(resource);
     }
 
     /**
-     * 创建资源
-     * 
-     * @param resource 资源信息
-     * @return 创建的资源
+     * 添加资源
      */
     @PostMapping
-    public ResponseEntity<?> createResource(@RequestBody Resource resource) {
-        // 设置创建时间
-        resource.setCreatedAt(new Date());
-        resource.setUpdatedAt(new Date());
-        
-        // 设置创建者
-        User currentUser = getCurrentUser();
-        if (currentUser != null) {
-            resource.setCreatedBy(currentUser);
+    public ResponseEntity<?> addResource(@RequestBody Resource resource, Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(401).body("用户未登录");
         }
         
-        // 初始化计数器
-        resource.setViewCount(0);
-        resource.setFavoriteCount(0);
+        User user = userService.findByUsername(principal.getName());
+        if (user == null) {
+            return ResponseEntity.status(401).body("用户不存在");
+        }
         
-        Resource savedResource = resourceRepository.save(resource);
+        Resource savedResource = resourceService.addResource(resource, user);
         return ResponseEntity.ok(savedResource);
     }
 
     /**
-     * 更新资源
-     * 
-     * @param id 资源ID
-     * @param resource 更新的资源信息
-     * @return 更新后的资源
+     * 获取热门资源
      */
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateResource(@PathVariable Long id, @RequestBody Resource resource) {
-        Optional<Resource> existingResource = resourceRepository.findById(id);
-        
-        if (existingResource.isPresent()) {
-            Resource r = existingResource.get();
-            
-            // 检查权限
-            User currentUser = getCurrentUser();
-            if (currentUser == null || (r.getCreatedBy() != null && !r.getCreatedBy().getId().equals(currentUser.getId()))) {
-                return ResponseEntity.status(403).body("您没有权限修改该资源");
-            }
-            
-            // 更新字段
-            r.setTitle(resource.getTitle());
-            r.setDescription(resource.getDescription());
-            r.setUrl(resource.getUrl());
-            r.setCategory(resource.getCategory());
-            r.setCoverImage(resource.getCoverImage());
-            r.setUpdatedAt(new Date());
-            
-            Resource updatedResource = resourceRepository.save(r);
-            return ResponseEntity.ok(updatedResource);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    @GetMapping("/popular")
+    public ResponseEntity<?> getPopularResources() {
+        List<Resource> resources = resourceService.getPopularResources();
+        return ResponseEntity.ok(resources);
     }
 
     /**
-     * 删除资源
-     * 
-     * @param id 资源ID
-     * @return 操作结果
+     * 获取最新资源
      */
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteResource(@PathVariable Long id) {
-        Optional<Resource> existingResource = resourceRepository.findById(id);
+    @GetMapping("/latest")
+    public ResponseEntity<?> getLatestResources() {
+        List<Resource> resources = resourceService.getLatestResources();
+        return ResponseEntity.ok(resources);
+    }
+
+    /**
+     * 获取资源分类列表
+     */
+    @GetMapping("/categories")
+    public ResponseEntity<?> getCategories() {
+        // 这里简化处理，返回固定的分类列表
+        Map<String, String> categories = new HashMap<>();
+        categories.put("programming", "编程");
+        categories.put("ai", "人工智能");
+        categories.put("design", "设计");
+        categories.put("business", "商业");
+        categories.put("language", "语言学习");
         
-        if (existingResource.isPresent()) {
-            Resource r = existingResource.get();
-            
-            // 检查权限
-            User currentUser = getCurrentUser();
-            if (currentUser == null || (r.getCreatedBy() != null && !r.getCreatedBy().getId().equals(currentUser.getId()))) {
-                return ResponseEntity.status(403).body("您没有权限删除该资源");
-            }
-            
-            resourceRepository.delete(r);
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(categories);
     }
 
     /**
@@ -327,3 +283,5 @@ public class ResourceController {
         return userRepository.findByUsername(username);
     }
 }
+
+

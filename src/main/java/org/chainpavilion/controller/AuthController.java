@@ -78,7 +78,9 @@ public class AuthController {
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("登录失败：" + e.getMessage());
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", "登录失败：" + e.getMessage());
+            return ResponseEntity.badRequest().body(errorResponse);
         }
     }
 
@@ -97,12 +99,16 @@ public class AuthController {
 
             // 检查用户名是否已存在
             if (userRepository.existsByUsername(username)) {
-                return ResponseEntity.badRequest().body("用户名已存在");
+                Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", "用户名已存在");
+            return ResponseEntity.badRequest().body(errorResponse);
             }
 
             // 检查邮箱是否已存在
             if (userRepository.existsByEmail(email)) {
-                return ResponseEntity.badRequest().body("邮箱已被注册");
+                Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", "邮箱已被注册");
+            return ResponseEntity.badRequest().body(errorResponse);
             }
 
             // 创建新用户
@@ -121,7 +127,9 @@ public class AuthController {
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("注册失败：" + e.getMessage());
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", "注册失败：" + e.getMessage());
+            return ResponseEntity.badRequest().body(errorResponse);
         }
     }
-} 
+}

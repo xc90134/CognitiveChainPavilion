@@ -3,132 +3,210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>知链智阁社区</title>
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <title>社区论坛 - 知链智阁</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/modern-style.css">
     <style>
-        .post-card {
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
+        .forum-container {
+            padding: 40px 0;
+            background: #f8f9fa;
+            min-height: calc(100vh - 180px);
         }
-        .post-card:hover {
+        .forum-card {
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            margin-bottom: 20px;
+        }
+        .forum-card:hover {
             transform: translateY(-5px);
         }
-        .comment-section {
+        .topic-card {
+            border: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        .topic-card:hover {
             background-color: #f8f9fa;
-            border-radius: 8px;
+        }
+        .category-badge {
+            font-size: 0.8rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 20px;
+        }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+        .topic-stats {
+            font-size: 0.9rem;
+            color: #6c757d;
         }
     </style>
 </head>
 <body>
-    <div class="container py-5">
-        <h2 class="mb-4">知链智阁知识交流社区</h2>
-        
-        <!-- 发帖表单 -->
-        <div class="card post-card mb-4">
-            <div class="card-body">
-                <h5 class="card-title">发表新话题</h5>
-                <form id="postForm">
-                    <div class="mb-3">
-                        <input type="text" class="form-control" placeholder="请输入标题" required>
-                    </div>
-                    <div class="mb-3">
-                        <textarea class="form-control" rows="3" placeholder="分享你的见解..." required></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">发布帖子</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- 帖子列表 -->
-        <div id="postList">
-            <!-- 动态加载帖子 -->
-            <div class="card post-card mb-3">
-                <div class="card-body">
-                    <h5>示例帖子标题</h5>
-                    <p class="text-muted">作者：示例用户 · 发布于 2小时前</p>
-                    <p>这里是帖子内容示例，展示知链智阁技术的最新发展动态...</p>
-                    
-                    <!-- 评论区域 -->
-                    <div class="comment-section p-3 mt-3">
-                        <h6>评论（2）</h6>
-                        <div class="mb-2">
-                            <p class="mb-0"><strong>用户A：</strong>很好的观点！</p>
-                            <small class="text-muted">1小时前</small>
-                        </div>
-                        <form class="mt-2">
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder="写下你的评论...">
-                                <button class="btn btn-outline-secondary" type="button">发送</button>
-                            </div>
-                        </form>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">知链智阁</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">首页</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/resources.html">资源库</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/forum.html">社区</a>
+                    </li>
+                </ul>
+                <div class="d-flex" id="navAuth">
+                    <a href="/login.html" class="btn btn-outline-light me-2">登录</a>
+                    <a href="/register.html" class="btn btn-light">注册</a>
+                </div>
+                <div class="d-flex d-none" id="navUser">
+                    <div class="dropdown">
+                        <button class="btn btn-light dropdown-toggle" type="button" id="userMenuButton" data-bs-toggle="dropdown">
+                            <span id="username">用户名</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/profile.html">个人中心</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="logoutBtn">退出登录</a></li>
+                        </ul>
                     </div>
                 </div>
             </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <div class="forum-container">
+        <div class="container">
+            <!-- 顶部操作栏 -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>发布主题
+                    </button>
+                    <div class="btn-group">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-filter me-2"></i>筛选
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">最新发布</a></li>
+                            <li><a class="dropdown-item" href="#">最多回复</a></li>
+                            <li><a class="dropdown-item" href="#">最多点赞</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="input-group" style="max-width: 300px;">
+                    <input type="text" class="form-control" placeholder="搜索主题...">
+                    <button class="btn btn-outline-secondary" type="button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 主题列表 -->
+            <div class="forum-card bg-white p-4">
+                <!-- 示例主题 1 -->
+                <div class="topic-card p-3 border-bottom">
+                    <div class="d-flex">
+                        <img src="https://via.placeholder.com/40" alt="用户头像" class="user-avatar me-3">
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h5 class="mb-1">区块链技术在供应链管理中的应用</h5>
+                                    <span class="badge bg-primary category-badge me-2">技术讨论</span>
+                                    <small class="text-muted">作者：张三 · 2小时前</small>
+                                </div>
+                                <div class="topic-stats text-end">
+                                    <div><i class="fas fa-eye me-1"></i>1.2k</div>
+                                    <div><i class="fas fa-comment me-1"></i>32</div>
+                                </div>
+                            </div>
+                            <p class="mb-0 mt-2 text-muted">探讨区块链技术如何优化供应链管理流程，提高透明度和效率...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 示例主题 2 -->
+                <div class="topic-card p-3 border-bottom">
+                    <div class="d-flex">
+                        <img src="https://via.placeholder.com/40" alt="用户头像" class="user-avatar me-3">
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h5 class="mb-1">智能合约开发最佳实践</h5>
+                                    <span class="badge bg-success category-badge me-2">教程</span>
+                                    <small class="text-muted">作者：李四 · 5小时前</small>
+                                </div>
+                                <div class="topic-stats text-end">
+                                    <div><i class="fas fa-eye me-1"></i>980</div>
+                                    <div><i class="fas fa-comment me-1"></i>25</div>
+                                </div>
+                            </div>
+                            <p class="mb-0 mt-2 text-muted">分享智能合约开发中的经验和注意事项，帮助开发者避免常见陷阱...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 示例主题 3 -->
+                <div class="topic-card p-3">
+                    <div class="d-flex">
+                        <img src="https://via.placeholder.com/40" alt="用户头像" class="user-avatar me-3">
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h5 class="mb-1">DeFi项目风险分析</h5>
+                                    <span class="badge bg-warning category-badge me-2">分析</span>
+                                    <small class="text-muted">作者：王五 · 1天前</small>
+                                </div>
+                                <div class="topic-stats text-end">
+                                    <div><i class="fas fa-eye me-1"></i>2.5k</div>
+                                    <div><i class="fas fa-comment me-1"></i>48</div>
+                                </div>
+                            </div>
+                            <p class="mb-0 mt-2 text-muted">深入分析当前DeFi项目存在的风险，为投资者提供参考建议...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 分页 -->
+            <nav class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1">上一页</a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">下一页</a>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
 
-    <script src="/js/bootstrap.bundle.min.js"></script>
-    <script>
+    <!-- 页脚 -->
+    <footer class="bg-dark text-light py-4">
+        <div class="container text-center">
+            <p class="mb-0">© 2024 知链智阁项目. All rights reserved.</p>
+        </div>
+    </footer>
 
-    // 帖子数据请求API地址
-    const API_URL = '/api/posts';
-
-    // 初始化事件监听
-    document.addEventListener('DOMContentLoaded', () => {
-        loadPosts();
-        document.getElementById('postForm').addEventListener('submit', handleSubmit);
-    });
-
-    // 加载帖子列表
-    async function loadPosts() {
-        try {
-            const response = await fetch(API_URL);
-            const posts = await response.json();
-            renderPosts(posts);
-        } catch (error) {
-            console.error('加载帖子失败:', error);
-        }
-    }
-
-    // 处理表单提交
-    async function handleSubmit(event) {
-        event.preventDefault();
-        
-        const formData = {
-            title: event.target[0].value,
-            content: event.target[1].value
-        };
-
-        try {
-            await fetch(API_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData)
-            });
-            event.target.reset();
-            loadPosts();
-        } catch (error) {
-            console.error('提交失败:', error);
-        }
-    }
-
-    // 渲染帖子列表
-    function renderPosts(posts) {
-        const container = document.getElementById('postList');
-        container.innerHTML = posts.map(post => `
-            <div class="card post-card mb-3">
-                <div class="card-body">
-                    <h5>${post.title}</h5>
-                    <p class="text-muted">作者：${post.author} · 发布于 ${post.time}</p>
-                    <p>${post.content}</p>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    </script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/forum.js"></script>
 </body>
 </html>

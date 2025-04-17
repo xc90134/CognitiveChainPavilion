@@ -137,4 +137,18 @@ public class JwtUtil {
         final String extractedUsername = extractUsername(token);
         return (username.equals(extractedUsername) && !isTokenExpired(token));
     }
+    
+    /**
+     * 验证JWT令牌（仅检查令牌有效性，不验证用户名）
+     * 
+     * @param token JWT令牌
+     * @return 令牌是否有效
+     */
+    public Boolean validateToken(String token) {
+        try {
+            return !isTokenExpired(token);
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

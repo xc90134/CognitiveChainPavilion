@@ -3,109 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>登录 - 知链智阁项目</title>
-    <link href="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <title>用户登录 - 知链智阁</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/modern-style.css">
     <style>
-        body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
+        .auth-container {
+            min-height: calc(100vh - 180px);
             display: flex;
             align-items: center;
             justify-content: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 100%);
         }
-        .login-card {
-            max-width: 450px;
-            width: 90%;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            background-color: white;
-        }
-        .login-title {
-            text-align: center;
-            color: #1a237e;
-            margin-bottom: 30px;
-        }
-        .btn-primary {
-            background-color: #1a237e;
-            border-color: #1a237e;
+        .auth-card {
             width: 100%;
-            padding: 12px;
-            font-size: 16px;
-            margin-top: 20px;
+            max-width: 450px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
         }
-        .btn-primary:hover {
-            background-color: #0d47a1;
-            border-color: #0d47a1;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .register-link {
+        .auth-header {
+            background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+            color: white;
+            border-radius: 15px 15px 0 0;
+            padding: 20px;
             text-align: center;
-            margin-top: 20px;
+        }
+        .auth-body {
+            padding: 30px;
+        }
+        .social-auth-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+        .social-auth-btn:hover {
+            transform: translateY(-2px);
         }
     </style>
 </head>
 <body>
-    <div class="login-card">
-        <h2 class="login-title">用户登录</h2>
-        <form id="loginForm">
-            <div class="form-group">
-                <label for="username">用户名</label>
-                <input type="text" class="form-control" id="username" name="username" required>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">知链智阁</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">首页</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/resources.html">资源库</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/forum.html">社区</a>
+                    </li>
+                </ul>
             </div>
-            <div class="form-group">
-                <label for="password">密码</label>
-                <input type="password" class="form-control" id="password" name="password" required>
-            </div>
-            <button type="submit" class="btn btn-primary">登录</button>
-        </form>
-        <div class="register-link">
-            <p>还没有账号？<a href="/register.html">立即注册</a></p>
         </div>
-        <div class="text-center mt-3">
-            <a href="/" class="text-decoration-none">返回首页</a>
+    </nav>
+
+    <!-- 主要内容 -->
+    <div class="auth-container">
+        <div class="container">
+            <div class="auth-card mx-auto bg-white">
+                <div class="auth-header">
+                    <h2 class="mb-0"><i class="fas fa-sign-in-alt me-2"></i>用户登录</h2>
+                </div>
+                <div class="auth-body">
+                    <form id="loginForm" method="POST" action="/api/auth/login">
+                        <div class="mb-4">
+                            <label for="username" class="form-label">用户名</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                <input type="text" class="form-control" id="username" name="username" required
+                                    placeholder="请输入用户名" autofocus>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="password" class="form-label">密码</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                <input type="password" class="form-control" id="password" name="password" required
+                                    placeholder="请输入密码">
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe">
+                                <label class="form-check-label" for="rememberMe">记住我</label>
+                            </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-sign-in-alt me-2"></i>登录
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <div class="text-center mt-4">
+                        <p class="text-muted">还没有账号？ <a href="/register.html" class="text-primary">立即注册</a></p>
+                        <div class="mt-4">
+                            <p class="text-muted mb-3">其他登录方式</p>
+                            <a href="#" class="social-auth-btn btn btn-outline-dark">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="#" class="social-auth-btn btn btn-outline-primary">
+                                <i class="fab fa-google"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- 页脚 -->
+    <footer class="bg-dark text-light py-4">
+        <div class="container text-center">
+            <p class="mb-0">© 2024 知链智阁项目. All rights reserved.</p>
+        </div>
+    </footer>
+
     <script src="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            
-            fetch('/api/auth/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    username: username,
-                    password: password
-                })
-            })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error('登录失败');
-                }
-            })
-            .then(data => {
-                // 保存token到localStorage
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('user', JSON.stringify(data.user));
-                
-                // 跳转到首页
-                window.location.href = '/';
-            })
-            .catch(error => {
-                alert('登录失败：' + error.message);
-            });
-        });
-    </script>
+    <script src="/js/auth.js"></script>
 </body>
-</html> 
+</html>

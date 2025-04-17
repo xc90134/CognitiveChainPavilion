@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.chainpavilion.model.enums.ResourceCategory;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -56,6 +57,11 @@ public class Resource {
     private String coverImage;
 
     /**
+     * 资源来源网站
+     */
+    private String sourceWebsite;
+
+    /**
      * 浏览量
      */
     @Column(name = "view_count")
@@ -71,15 +77,13 @@ public class Resource {
      * 创建时间
      */
     @Column(name = "created_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     /**
      * 更新时间
      */
     @Column(name = "updated_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
+    private LocalDateTime updatedAt;
 
     /**
      * 创建此资源的用户
@@ -147,6 +151,14 @@ public class Resource {
         this.coverImage = coverImage;
     }
 
+    public String getSourceWebsite() {
+        return sourceWebsite;
+    }
+
+    public void setSourceWebsite(String sourceWebsite) {
+        this.sourceWebsite = sourceWebsite;
+    }
+
     public Integer getViewCount() {
         return viewCount;
     }
@@ -163,19 +175,19 @@ public class Resource {
         this.favoriteCount = favoriteCount;
     }
 
-    public Date getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Date getUpdatedAt() {
+    public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
+    public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 
@@ -201,5 +213,16 @@ public class Resource {
     
     public void setFavorited(boolean favorited) {
         this.favorited = favorited;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+    
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
     }
 }
