@@ -16,14 +16,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * @author 知链智阁团队
  */
 @Configuration
-@EnableWebMvc
+
 public class WebConfig implements WebMvcConfigurer {
 
     /**
      * 配置跨域资源共享
-     * 
+     * <p>
      * 允许前端应用从不同域名/端口访问API
-     * 
+     *
      * @param registry CORS配置注册表
      */
     @Override
@@ -37,8 +37,18 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/**")
+        // 添加favicon处理器
+        registry.addResourceHandler("/favicon.ico")
                 .addResourceLocations("classpath:/static/")
-                .setCacheControl(null);
+                .setCachePeriod(3600);  // 添加缓存
+
+        // 根路径映射
+        registry.addResourceHandler("/")
+                .addResourceLocations("classpath:/static/");
+
+        // 添加静态资源处理器
+        registry.addResourceHandler("/static/**")
+                .addResourceLocations("classpath:/static/")
+                .setCachePeriod(3600);
     }
-} 
+}

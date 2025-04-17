@@ -15,7 +15,6 @@ import java.util.Map;
 
 /**
  * 资源数据访问接口
- * 
  * 提供学习资源相关的数据库操作功能，包括：
  * - 基本的CRUD操作（继承自JpaRepository）
  * - 根据分类查询资源
@@ -26,13 +25,19 @@ import java.util.Map;
  */
 @Repository
 public interface ResourceRepository extends JpaRepository<Resource, Long> {
+    @Query("SELECT r FROM Resource r WHERE " +
+           "LOWER(r.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+           "LOWER(r.description) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    Page<Resource> searchByKeyword(@Param("keyword") String keyword, Pageable pageable);
+
+    Page<Resource> findByCategory(ResourceCategory category, Pageable pageable);
     /**
      * 根据分类查找资源列表
      * 
      * @param category 资源分类名称
      * @return 该分类下的所有资源列表
      */
-    List<Resource> findByCategory(String category);
+
 
     /**
      * 根据分类查询资源
@@ -41,17 +46,9 @@ public interface ResourceRepository extends JpaRepository<Resource, Long> {
      * @param pageable 分页参数
      * @return 分页资源列表
      */
-    Page<Resource> findByCategory(ResourceCategory category, Pageable pageable);
     
-    /**
-     * 根据关键词搜索资源（标题或描述包含关键词）
-     * 
-     * @param keyword 搜索关键词
-     * @param pageable 分页参数
-     * @return 分页资源列表
-     */
-    @Query("SELECT r FROM Resource r WHERE r.title LIKE %:keyword% OR r.description LIKE %:keyword%")
-    Page<Resource> findByKeyword(@Param("keyword") String keyword, Pageable pageable);
+
+    
     
     /**
      * 根据分类和关键词搜索资源
@@ -81,4 +78,40 @@ public interface ResourceRepository extends JpaRepository<Resource, Long> {
      */
     @Query("SELECT r.category, COUNT(r) FROM Resource r GROUP BY r.category")
     Map<ResourceCategory, Long> getCategoryCounts();
+
+    /**
+     * 根据分类查询资源
+     */
+
+    
+    /**
+     * 根据关键词搜索资源（标题和描述）
+     */
+    @Query("SELECT r FROM Resource r WHERE r.title LIKE %:keyword% OR r.description LIKE %:keyword%")
+    Page<Resource> findByKeyword(@Param("keyword") String keyword, Pageable pageable);
+    
+    /**
+     * 根据分类和关键词组合搜索
+     */
+    @Query("SELECT r FROM Resource r WHERE (:category IS NULL OR r.category = :category) " +
+           "AND (r.title LIKE %:keyword% OR r.description LIKE %:keyword%)")
+    Page<Resource> searchByCategoryAndKeyword(
+            @Param("category") String category, 
+            @Param("keyword") String keyword, 
+            Pageable pageable);
+    
+    /**
+     * 获取热门资源（浏览量最高）
+     */
+    List<Resource> findTop10ByOrderByViewCountDesc();
+    
+    /**
+     * 获取最新资源
+     */
+    List<Resource> findTop10ByOrderByCreatedAtDesc();
+    
+    /**
+     * 根据创建者ID查找资源
+     */
+    Page<Resource> findByCreatedById(Long userId, Pageable pageable);
 }

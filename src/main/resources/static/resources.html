@@ -3,419 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>学习资源 - 知链智阁项目</title>
-    <link href="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <title>资源库 - 知链智阁</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/modern-style.css">
     <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .header-banner {
-            background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
-            color: white;
-            padding: 50px 0;
-            text-align: center;
-            margin-bottom: 30px;
+        .resources-container {
+            padding: 40px 0;
+            background: #f8f9fa;
+            min-height: calc(100vh - 180px);
         }
         .resource-card {
-            border: none;
-            border-radius: 10px;
-            overflow: hidden;
+            border-radius: 15px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
-            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+            overflow: hidden;
+            height: 100%;
         }
         .resource-card:hover {
             transform: translateY(-5px);
         }
-        .card-img-top {
-            height: 180px;
+        .resource-image {
+            height: 200px;
             object-fit: cover;
         }
         .category-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            padding: 5px 10px;
-            border-radius: 20px;
             font-size: 0.8rem;
-            font-weight: bold;
+            padding: 0.3rem 0.6rem;
+            border-radius: 20px;
         }
-        .filters {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            margin-bottom: 30px;
+        .resource-stats {
+            font-size: 0.9rem;
+            color: #6c757d;
         }
-        .no-resources {
-            text-align: center;
-            padding: 50px;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        .filter-btn {
+            border-radius: 20px;
+            padding: 8px 16px;
+            margin: 0 5px;
+            transition: all 0.3s ease;
         }
-        .favorite-btn {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            background: transparent;
-            border: none;
-            color: #dc3545;
-            font-size: 1.2rem;
+        .filter-btn:hover, .filter-btn.active {
+            background-color: #0d47a1;
+            color: white;
         }
     </style>
 </head>
 <body>
     <!-- 导航栏 -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a class="navbar-brand" href="/">知链智阁项目</a>
+            <a class="navbar-brand" href="/">知链智阁</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="/resources.html">学习资源</a>
+                        <a class="nav-link" href="/">首页</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/forum.html">技术讨论</a>
+                        <a class="nav-link active" href="/resources.html">资源库</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/forum.html">社区</a>
                     </li>
                 </ul>
-                <ul class="navbar-nav ms-auto" id="authNav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/login.html">登录</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/register.html">注册</a>
-                    </li>
-                </ul>
+                <div class="d-flex" id="navAuth">
+                    <a href="/login.html" class="btn btn-outline-light me-2">登录</a>
+                    <a href="/register.html" class="btn btn-light">注册</a>
+                </div>
+                <div class="d-flex d-none" id="navUser">
+                    <div class="dropdown">
+                        <button class="btn btn-light dropdown-toggle" type="button" id="userMenuButton" data-bs-toggle="dropdown">
+                            <span id="username">用户名</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/profile.html">个人中心</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="logoutBtn">退出登录</a></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
 
-    <!-- 头部横幅 -->
-    <div class="header-banner">
+    <!-- 主要内容 -->
+    <div class="resources-container">
         <div class="container">
-            <h1>知链智阁学习资源</h1>
-            <p class="lead">精选优质资源，助力学习</p>
-        </div>
-    </div>
-
-    <div class="container">
-        <!-- 筛选器 -->
-        <div class="filters">
-            <div class="row">
-                <div class="col-md-4 mb-3">
-                    <label for="categoryFilter" class="form-label">资源分类</label>
-                    <select id="categoryFilter" class="form-select">
-                        <option value="">全部分类</option>
-                        <option value="COURSE">课程教程</option>
-                        <option value="ARTICLE">文章资讯</option>
-                        <option value="CODE">代码示例</option>
-                        <option value="TOOL">开发工具</option>
-                        <option value="OTHER">其它资源</option>
-                    </select>
+            <!-- 顶部搜索和筛选 -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="搜索资源...">
+                        <button class="btn btn-outline-primary" type="button">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
                 </div>
-                <div class="col-md-4 mb-3">
-                    <label for="sortOrder" class="form-label">排序方式</label>
-                    <select id="sortOrder" class="form-select">
-                        <option value="createdAt,desc">最新发布</option>
-                        <option value="viewCount,desc">最多浏览</option>
-                        <option value="favoriteCount,desc">最多收藏</option>
-                    </select>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <label for="searchInput" class="form-label">搜索</label>
-                    <input type="text" id="searchInput" class="form-control" placeholder="关键词搜索">
+                <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                    <button class="btn filter-btn active">全部</button>
+                    <button class="btn filter-btn">教程</button>
+                    <button class="btn filter-btn">文档</button>
+                    <button class="btn filter-btn">工具</button>
                 </div>
             </div>
-            <div class="row mt-2">
-                <div class="col-12">
-                    <button id="searchBtn" class="btn btn-primary">搜索</button>
-                    <button id="resetBtn" class="btn btn-outline-secondary ms-2">重置</button>
+
+            <!-- 资源列表 -->
+            <div class="row g-4">
+                <!-- 资源卡片 1 -->
+                <div class="col-md-4">
+                    <div class="resource-card bg-white">
+                        <img src="https://via.placeholder.com/400x200" class="resource-image w-100" alt="资源图片">
+                        <div class="p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="mb-0">区块链入门指南</h5>
+                                <span class="badge bg-primary category-badge">教程</span>
+                            </div>
+                            <p class="text-muted mb-3">从零开始学习区块链技术，包含基础概念和实践案例...</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="resource-stats">
+                                    <i class="fas fa-download me-1"></i>1.2k
+                                    <i class="fas fa-star ms-2 me-1"></i>4.8
+                                </div>
+                                <a href="#" class="btn btn-outline-primary btn-sm">查看详情</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 资源卡片 2 -->
+                <div class="col-md-4">
+                    <div class="resource-card bg-white">
+                        <img src="https://via.placeholder.com/400x200" class="resource-image w-100" alt="资源图片">
+                        <div class="p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="mb-0">智能合约开发手册</h5>
+                                <span class="badge bg-success category-badge">文档</span>
+                            </div>
+                            <p class="text-muted mb-3">详细的智能合约开发指南，包含最佳实践和安全建议...</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="resource-stats">
+                                    <i class="fas fa-download me-1"></i>980
+                                    <i class="fas fa-star ms-2 me-1"></i>4.6
+                                </div>
+                                <a href="#" class="btn btn-outline-primary btn-sm">查看详情</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 资源卡片 3 -->
+                <div class="col-md-4">
+                    <div class="resource-card bg-white">
+                        <img src="https://via.placeholder.com/400x200" class="resource-image w-100" alt="资源图片">
+                        <div class="p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="mb-0">区块链开发工具包</h5>
+                                <span class="badge bg-warning category-badge">工具</span>
+                            </div>
+                            <p class="text-muted mb-3">集成了常用的区块链开发工具和框架，提高开发效率...</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="resource-stats">
+                                    <i class="fas fa-download me-1"></i>2.5k
+                                    <i class="fas fa-star ms-2 me-1"></i>4.9
+                                </div>
+                                <a href="#" class="btn btn-outline-primary btn-sm">查看详情</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- 资源列表 -->
-        <div class="row" id="resourcesContainer">
-            <!-- 资源卡片会通过JavaScript动态生成 -->
+            <!-- 分页 -->
+            <nav class="mt-5">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1">上一页</a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">下一页</a>
+                    </li>
+                </ul>
+            </nav>
         </div>
-        
-        <!-- 分页 -->
-        <nav aria-label="资源分页" class="my-4">
-            <ul class="pagination justify-content-center" id="pagination">
-                <!-- 分页按钮会通过JavaScript动态生成 -->
-            </ul>
-        </nav>
     </div>
 
     <!-- 页脚 -->
-    <footer class="bg-dark text-light py-4 mt-5">
+    <footer class="bg-dark text-light py-4">
         <div class="container text-center">
             <p class="mb-0">© 2024 知链智阁项目. All rights reserved.</p>
         </div>
     </footer>
 
     <script src="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // 页面加载完成后执行
-        document.addEventListener('DOMContentLoaded', function() {
-            // 初始化页面
-            loadResources();
-            
-            // 检查用户登录状态
-            checkLoginStatus();
-            
-            // 绑定事件
-            document.getElementById('searchBtn').addEventListener('click', loadResources);
-            document.getElementById('resetBtn').addEventListener('click', resetFilters);
-        });
-        
-        // 检查登录状态
-        function checkLoginStatus() {
-            const token = localStorage.getItem('token');
-            const user = localStorage.getItem('user');
-            
-            if (token && user) {
-                // 用户已登录
-                const userData = JSON.parse(user);
-                const authNav = document.getElementById('authNav');
-                authNav.innerHTML = `
-                    <li class="nav-item">
-                        <span class="nav-link">欢迎，${userData.username}</span>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" id="logoutBtn">退出</a>
-                    </li>
-                `;
-                
-                // 绑定退出登录事件
-                document.getElementById('logoutBtn').addEventListener('click', function(e) {
-                    e.preventDefault();
-                    localStorage.removeItem('token');
-                    localStorage.removeItem('user');
-                    window.location.reload();
-                });
-            }
-        }
-        
-        // 加载资源列表
-        function loadResources(page = 0) {
-            const category = document.getElementById('categoryFilter').value;
-            const sort = document.getElementById('sortOrder').value;
-            const keyword = document.getElementById('searchInput').value;
-            
-            // 构建API URL
-            let apiUrl = `/api/resources?page=${page}&size=12&sort=${sort}`;
-            if (category) {
-                apiUrl += `&category=${category}`;
-            }
-            if (keyword) {
-                apiUrl += `&keyword=${encodeURIComponent(keyword)}`;
-            }
-            
-            // 获取token
-            const token = localStorage.getItem('token');
-            const headers = {
-                'Content-Type': 'application/json'
-            };
-            
-            if (token) {
-                headers['Authorization'] = `Bearer ${token}`;
-            }
-            
-            // 发起API请求
-            fetch(apiUrl, {
-                method: 'GET',
-                headers: headers
-            })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error('获取资源失败');
-                }
-            })
-            .then(data => {
-                renderResources(data.content);
-                renderPagination(data);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                document.getElementById('resourcesContainer').innerHTML = `
-                    <div class="col-12">
-                        <div class="no-resources">
-                            <h3>加载资源失败</h3>
-                            <p>${error.message}</p>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-        
-        // 渲染资源列表
-        function renderResources(resources) {
-            const container = document.getElementById('resourcesContainer');
-            
-            if (!resources || resources.length === 0) {
-                container.innerHTML = `
-                    <div class="col-12">
-                        <div class="no-resources">
-                            <h3>暂无资源</h3>
-                            <p>没有找到符合条件的资源</p>
-                        </div>
-                    </div>
-                `;
-                return;
-            }
-            
-            let html = '';
-            resources.forEach(resource => {
-                const categoryClass = getCategoryClass(resource.category);
-                const categoryName = getCategoryName(resource.category);
-                
-                html += `
-                    <div class="col-md-4 col-sm-6">
-                        <div class="card resource-card">
-                            <img src="${resource.coverImage || 'https://via.placeholder.com/300x180?text=区块链资源'}" class="card-img-top" alt="${resource.title}">
-                            <div class="card-body">
-                                <span class="badge ${categoryClass} category-badge">${categoryName}</span>
-                                <h5 class="card-title">${resource.title}</h5>
-                                <p class="card-text text-muted small">发布时间：${new Date(resource.createdAt).toLocaleDateString()}</p>
-                                <p class="card-text">${resource.description.length > 80 ? resource.description.substring(0, 80) + '...' : resource.description}</p>
-                                <a href="${resource.url}" target="_blank" class="btn btn-sm btn-primary">查看详情</a>
-                                <button class="favorite-btn" data-id="${resource.id}" data-favorited="${resource.favorited}">
-                                    <i class="fas ${resource.favorited ? 'fa-heart' : 'fa-heart-o'}"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            container.innerHTML = html;
-            
-            // 绑定收藏按钮事件
-            document.querySelectorAll('.favorite-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    toggleFavorite(this.dataset.id, this);
-                });
-            });
-        }
-        
-        // 渲染分页
-        function renderPagination(pageData) {
-            const pagination = document.getElementById('pagination');
-            const totalPages = pageData.totalPages;
-            const currentPage = pageData.number;
-            
-            let html = '';
-            
-            // 上一页
-            html += `
-                <li class="page-item ${currentPage === 0 ? 'disabled' : ''}">
-                    <a class="page-link" href="#" data-page="${currentPage - 1}">上一页</a>
-                </li>
-            `;
-            
-            // 页码
-            for (let i = 0; i < totalPages; i++) {
-                if (totalPages <= 7 || i === 0 || i === totalPages - 1 || Math.abs(i - currentPage) <= 2) {
-                    html += `
-                        <li class="page-item ${i === currentPage ? 'active' : ''}">
-                            <a class="page-link" href="#" data-page="${i}">${i + 1}</a>
-                        </li>
-                    `;
-                } else if (Math.abs(i - currentPage) === 3) {
-                    html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
-                }
-            }
-            
-            // 下一页
-            html += `
-                <li class="page-item ${currentPage === totalPages - 1 ? 'disabled' : ''}">
-                    <a class="page-link" href="#" data-page="${currentPage + 1}">下一页</a>
-                </li>
-            `;
-            
-            pagination.innerHTML = html;
-            
-            // 绑定分页事件
-            document.querySelectorAll('.page-link').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    if (!this.parentNode.classList.contains('disabled') && this.dataset.page) {
-                        loadResources(parseInt(this.dataset.page));
-                    }
-                });
-            });
-        }
-        
-        // 重置筛选条件
-        function resetFilters() {
-            document.getElementById('categoryFilter').value = '';
-            document.getElementById('sortOrder').value = 'createdAt,desc';
-            document.getElementById('searchInput').value = '';
-            loadResources();
-        }
-        
-        // 切换收藏状态
-        function toggleFavorite(resourceId, button) {
-            const token = localStorage.getItem('token');
-            
-            if (!token) {
-                alert('请先登录');
-                window.location.href = '/login.html';
-                return;
-            }
-            
-            const isFavorited = button.dataset.favorited === 'true';
-            const method = isFavorited ? 'DELETE' : 'POST';
-            
-            fetch(`/api/resources/${resourceId}/favorite`, {
-                method: method,
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            })
-            .then(response => {
-                if (response.ok) {
-                    // 更新按钮状态
-                    button.dataset.favorited = !isFavorited;
-                    button.querySelector('i').className = `fas ${!isFavorited ? 'fa-heart' : 'fa-heart-o'}`;
-                } else {
-                    throw new Error('操作失败');
-                }
-            })
-            .catch(error => {
-                alert('收藏操作失败：' + error.message);
-            });
-        }
-        
-        // 获取分类对应的CSS类
-        function getCategoryClass(category) {
-            switch (category) {
-                case 'COURSE': return 'bg-primary';
-                case 'ARTICLE': return 'bg-info';
-                case 'CODE': return 'bg-success';
-                case 'TOOL': return 'bg-warning';
-                default: return 'bg-secondary';
-            }
-        }
-        
-        // 获取分类中文名称
-        function getCategoryName(category) {
-            switch (category) {
-                case 'COURSE': return '课程教程';
-                case 'ARTICLE': return '文章资讯';
-                case 'CODE': return '代码示例';
-                case 'TOOL': return '开发工具';
-                default: return '其它资源';
-            }
-        }
-    </script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/resources.js"></script>
 </body>
-</html> 
+</html>

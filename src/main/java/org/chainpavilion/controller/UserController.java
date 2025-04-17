@@ -40,7 +40,9 @@ public class UserController {
                 return ResponseEntity.ok(user);
             }
         }
-        return ResponseEntity.badRequest().body("用户未登录或不存在");
+        java.util.Map<String, String> errorResponse = new java.util.HashMap<>();
+        errorResponse.put("error", "用户未登录或不存在");
+        return ResponseEntity.badRequest().body(errorResponse);
     }
     
     /**
@@ -59,6 +61,8 @@ public class UserController {
                 return ResponseEntity.ok(updatedUser);
             }
         }
-        return ResponseEntity.badRequest().body("用户未登录或更新失败");
+        java.util.Map<String, String> errorResponse = new java.util.HashMap<>();
+        errorResponse.put("error", "用户未登录或更新失败");
+        return ResponseEntity.badRequest().body(errorResponse);
     }
 }
