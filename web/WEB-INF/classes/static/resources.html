@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <title>资源库 - 知链智阁</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/modern-style.css">
+    <style>
+        .resources-container {
+            padding: 40px 0;
+            background: #f8f9fa;
+            min-height: calc(100vh - 180px);
+        }
+        .resource-card {
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            overflow: hidden;
+            height: 100%;
+        }
+        .resource-card:hover {
+            transform: translateY(-5px);
+        }
+        .resource-image {
+            height: 200px;
+            object-fit: cover;
+        }
+        .category-badge {
+            font-size: 0.8rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 20px;
+        }
+        .resource-stats {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        .filter-btn {
+            border-radius: 20px;
+            padding: 8px 16px;
+            margin: 0 5px;
+            transition: all 0.3s ease;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background-color: #0d47a1;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">知链智阁</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">首页</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/resources.html">资源库</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/forum.html">社区</a>
+                    </li>
+                </ul>
+                <div class="d-flex" id="navAuth">
+                    <a href="/login.html" class="btn btn-outline-light me-2">登录</a>
+                    <a href="/register.html" class="btn btn-light">注册</a>
+                </div>
+                <div class="d-flex d-none" id="navUser">
+                    <div class="dropdown">
+                        <button class="btn btn-light dropdown-toggle" type="button" id="userMenuButton" data-bs-toggle="dropdown">
+                            <span id="username">用户名</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/profile.html">个人中心</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="logoutBtn">退出登录</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <div class="resources-container">
+        <div class="container">
+            <!-- 顶部搜索和筛选 -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="搜索资源...">
+                        <button class="btn btn-outline-primary" type="button">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                    <button class="btn filter-btn active">全部</button>
+                    <button class="btn filter-btn">教程</button>
+                    <button class="btn filter-btn">文档</button>
+                    <button class="btn filter-btn">工具</button>
+                </div>
+            </div>
+
+            <!-- 资源列表 -->
+            <div class="row g-4">
+                <!-- 资源卡片 1 -->
+                <div class="col-md-4">
+                    <div class="resource-card bg-white">
+                        <img src="https://via.placeholder.com/400x200" class="resource-image w-100" alt="资源图片">
+                        <div class="p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="mb-0">区块链入门指南</h5>
+                                <span class="badge bg-primary category-badge">教程</span>
+                            </div>
+                            <p class="text-muted mb-3">从零开始学习区块链技术，包含基础概念和实践案例...</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="resource-stats">
+                                    <i class="fas fa-download me-1"></i>1.2k
+                                    <i class="fas fa-star ms-2 me-1"></i>4.8
+                                </div>
+                                <a href="#" class="btn btn-outline-primary btn-sm">查看详情</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 资源卡片 2 -->
+                <div class="col-md-4">
+                    <div class="resource-card bg-white">
+                        <img src="https://via.placeholder.com/400x200" class="resource-image w-100" alt="资源图片">
+                        <div class="p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="mb-0">智能合约开发手册</h5>
+                                <span class="badge bg-success category-badge">文档</span>
+                            </div>
+                            <p class="text-muted mb-3">详细的智能合约开发指南，包含最佳实践和安全建议...</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="resource-stats">
+                                    <i class="fas fa-download me-1"></i>980
+                                    <i class="fas fa-star ms-2 me-1"></i>4.6
+                                </div>
+                                <a href="#" class="btn btn-outline-primary btn-sm">查看详情</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 资源卡片 3 -->
+                <div class="col-md-4">
+                    <div class="resource-card bg-white">
+                        <img src="https://via.placeholder.com/400x200" class="resource-image w-100" alt="资源图片">
+                        <div class="p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="mb-0">区块链开发工具包</h5>
+                                <span class="badge bg-warning category-badge">工具</span>
+                            </div>
+                            <p class="text-muted mb-3">集成了常用的区块链开发工具和框架，提高开发效率...</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="resource-stats">
+                                    <i class="fas fa-download me-1"></i>2.5k
+                                    <i class="fas fa-star ms-2 me-1"></i>4.9
+                                </div>
+                                <a href="#" class="btn btn-outline-primary btn-sm">查看详情</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 分页 -->
+            <nav class="mt-5">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1">上一页</a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">下一页</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-light py-4">
+        <div class="container text-center">
+            <p class="mb-0">© 2024 知链智阁项目. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/resources.js"></script>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人中心 - 知链智阁</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">知链智阁</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/resources.html">资源库</a>
+                    </li>
+                </ul>
+                <div class="d-flex d-none" id="navUser">
+                    <div class="dropdown">
+                        <button class="btn btn-light dropdown-toggle" type="button" id="userMenuButton" data-bs-toggle="dropdown">
+                            <span id="username">用户名</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item active" href="/profile.html">个人中心</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="logoutBtn">退出登录</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 内容区域 -->
+    <div class="container mt-4">
+        <div class="row">
+            <!-- 侧边栏 -->
+            <div class="col-md-3">
+                <div class="card mb-4">
+                    <div class="card-body text-center">
+                        <img src="https://via.placeholder.com/150" class="rounded-circle mb-3" alt="用户头像">
+                        <h5 class="card-title" id="profileUsername">用户名</h5>
+                        <p class="card-text text-muted" id="profileEmail">example@email.com</p>
+                    </div>
+                </div>
+                <div class="list-group mb-4" id="profileTabs">
+                    <a href="#favorites" class="list-group-item list-group-item-action active" data-bs-toggle="tab">我的收藏</a>
+                    <a href="#history" class="list-group-item list-group-item-action" data-bs-toggle="tab">浏览历史</a>
+                    <a href="#activities" class="list-group-item list-group-item-action" data-bs-toggle="tab">活动记录</a>
+                </div>
+            </div>
+            
+            <!-- 主要内容区 -->
+            <div class="col-md-9">
+                <div class="tab-content">
+                    <!-- 收藏列表 -->
+                    <div class="tab-pane fade show active" id="favorites">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">我的收藏</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row" id="favoritesList">
+                                    <!-- 收藏列表将通过JavaScript动态加载 -->
+                                </div>
+                                <!-- 分页 -->
+                                <nav aria-label="Page navigation" class="mt-4">
+                                    <ul class="pagination justify-content-center" id="favoritesPagination">
+                                        <!-- 分页按钮将通过JavaScript动态加载 -->
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 浏览历史 -->
+                    <div class="tab-pane fade" id="history">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">浏览历史</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="list-group" id="historyList">
+                                    <!-- 浏览历史将通过JavaScript动态加载 -->
+                                </div>
+                                <!-- 分页 -->
+                                <nav aria-label="Page navigation" class="mt-4">
+                                    <ul class="pagination justify-content-center" id="historyPagination">
+                                        <!-- 分页按钮将通过JavaScript动态加载 -->
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 活动记录 -->
+                    <div class="tab-pane fade" id="activities">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">活动记录</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="list-group" id="activitiesList">
+                                    <!-- 活动记录将通过JavaScript动态加载 -->
+                                </div>
+                                <!-- 分页 -->
+                                <nav aria-label="Page navigation" class="mt-4">
+                                    <ul class="pagination justify-content-center" id="activitiesPagination">
+                                        <!-- 分页按钮将通过JavaScript动态加载 -->
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 资源卡片模板 -->
+    <template id="resourceCardTemplate">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title resource-title">资源标题</h5>
+                    <p class="card-text resource-description">资源描述...</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-primary resource-category">分类</span>
+                        <span class="text-muted small">
+                            <i class="bi bi-eye"></i> <span class="resource-views">0</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="card-footer d-flex justify-content-between bg-white">
+                    <small class="text-muted resource-date">收藏时间</small>
+                    <div>
+                        <button class="btn btn-sm btn-outline-danger unfavorite-btn">
+                            <i class="bi bi-heart-fill"></i>
+                        </button>
+                        <a href="#" class="btn btn-sm btn-primary resource-link" target="_blank">查看</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- 活动项模板 -->
+    <template id="activityItemTemplate">
+        <a href="#" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1 activity-title">活动标题</h6>
+                <small class="text-muted activity-time">活动时间</small>
+            </div>
+            <p class="mb-1 activity-description">活动描述</p>
+            <small class="text-muted activity-type">活动类型</small>
+        </a>
+    </template>
+
+    <script src="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/profile.js"></script>
+</body>
+</html> 

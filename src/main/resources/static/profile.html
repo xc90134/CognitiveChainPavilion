@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <title>个人中心 - 知链智阁</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/modern-style.css">
+    <style>
+        .profile-container {
+            padding: 40px 0;
+            background: #f8f9fa;
+            min-height: calc(100vh - 180px);
+        }
+        .profile-card {
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .profile-header {
+            background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid white;
+            margin-bottom: 15px;
+        }
+        .nav-pills .nav-link {
+            color: #495057;
+            border-radius: 10px;
+            padding: 10px 20px;
+            margin: 5px;
+        }
+        .nav-pills .nav-link.active {
+            background-color: #0d47a1;
+        }
+        .activity-item {
+            border-left: 3px solid #0d47a1;
+            padding-left: 20px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">知链智阁</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">首页</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/resources.html">资源库</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/forum.html">社区</a>
+                    </li>
+                </ul>
+                <div class="d-flex" id="navUser">
+                    <div class="dropdown">
+                        <button class="btn btn-light dropdown-toggle" type="button" id="userMenuButton" data-bs-toggle="dropdown">
+                            <span id="username">用户名</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item active" href="/profile.html">个人中心</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="logoutBtn">退出登录</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <div class="profile-container">
+        <div class="container">
+            <div class="row">
+                <!-- 个人信息卡片 -->
+                <div class="col-lg-4 mb-4">
+                    <div class="profile-card bg-white">
+                        <div class="profile-header">
+                            <img src="https://via.placeholder.com/120" alt="用户头像" class="profile-avatar">
+                            <h4 class="mb-2">张三</h4>
+                            <p class="mb-0">区块链技术爱好者</p>
+                        </div>
+                        <div class="p-4">
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <div class="stat-card">
+                                        <h3 class="mb-1">15</h3>
+                                        <small class="text-muted">发帖数</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="stat-card">
+                                        <h3 class="mb-1">128</h3>
+                                        <small class="text-muted">获赞数</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="my-4">
+                            <div class="mb-3">
+                                <h6 class="mb-2">个人简介</h6>
+                                <p class="text-muted mb-0">热爱区块链技术，专注于智能合约开发和DeFi应用研究。希望通过技术创新推动行业发展。</p>
+                            </div>
+                            <button class="btn btn-outline-primary w-100">
+                                <i class="fas fa-edit me-2"></i>编辑资料
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 内容区域 -->
+                <div class="col-lg-8">
+                    <div class="card profile-card">
+                        <div class="card-body">
+                            <ul class="nav nav-pills mb-4" id="profileTab" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-bs-toggle="pill" href="#posts">我的帖子</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="pill" href="#collections">收藏夹</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="pill" href="#activities">动态</a>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content">
+                                <!-- 我的帖子 -->
+                                <div class="tab-pane fade show active" id="posts">
+                                    <div class="activity-item">
+                                        <h5>区块链技术在供应链管理中的应用</h5>
+                                        <p class="text-muted">探讨区块链技术如何优化供应链管理流程，提高透明度和效率...</p>
+                                        <small class="text-muted">发布于 2小时前 · 32条评论 · 128次浏览</small>
+                                    </div>
+                                    <div class="activity-item">
+                                        <h5>智能合约安全性分析</h5>
+                                        <p class="text-muted">分享智能合约开发中的安全注意事项和最佳实践...</p>
+                                        <small class="text-muted">发布于 2天前 · 15条评论 · 256次浏览</small>
+                                    </div>
+                                </div>
+
+                                <!-- 收藏夹 -->
+                                <div class="tab-pane fade" id="collections">
+                                    <div class="activity-item">
+                                        <h5>DeFi项目风险分析</h5>
+                                        <p class="text-muted">深入分析当前DeFi项目存在的风险，为投资者提供参考建议...</p>
+                                        <small class="text-muted">收藏于 1天前 · 作者：王五</small>
+                                    </div>
+                                </div>
+
+                                <!-- 动态 -->
+                                <div class="tab-pane fade" id="activities">
+                                    <div class="activity-item">
+                                        <p class="mb-1"><strong>发表了新帖子</strong></p>
+                                        <p class="text-muted mb-1">《区块链技术在供应链管理中的应用》</p>
+                                        <small class="text-muted">2小时前</small>
+                                    </div>
+                                    <div class="activity-item">
+                                        <p class="mb-1"><strong>收藏了帖子</strong></p>
+                                        <p class="text-muted mb-1">《DeFi项目风险分析》</p>
+                                        <small class="text-muted">1天前</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-light py-4">
+        <div class="container text-center">
+            <p class="mb-0">© 2024 知链智阁项目. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/profile.js"></script>
+</body>
+</html>
